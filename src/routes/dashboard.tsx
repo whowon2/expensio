@@ -24,9 +24,8 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="p-8 flex flex-col items-center">
+		<div className="flex flex-col items-center gap-4 p-8 md:flex-row">
 			<AddPrice />
-			<Separator className="my-4" />
 			<PricesList />
 		</div>
 	);

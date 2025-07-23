@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import type { location, product } from "~/db/schema";
 
 export function usePrices() {
 	return useQuery({
@@ -6,8 +7,13 @@ export function usePrices() {
 		queryFn: async () => {
 			const res = await fetch("/api/prices");
 			if (!res.ok) throw new Error("Failed to fetch prices");
-			const data = await res.json();
-			return data as Awaited<typeof data>;
+			const data: {
+				id: string;
+				product: typeof product.$inferSelect;
+				location: typeof location.$inferSelect;
+			} = await res.json();
+
+			return data;
 		},
 	});
 }
