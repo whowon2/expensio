@@ -17,6 +17,9 @@ export const ServerRoute = createServerFileRoute("/api/products").methods({
 						location: true,
 					},
 				},
+				productToTags: {
+					with: { tag: true },
+				},
 			},
 		});
 

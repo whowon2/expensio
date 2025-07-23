@@ -29,7 +29,12 @@ export const ServerRoute = createServerFileRoute("/api/prices").methods({
 		});
 	},
 	POST: async ({ request }) => {
+		console.info("POST /api/prices @", request.url);
+
 		const body = await request.json();
+
+		console.log(body);
+
 		const parsed = priceSchema.safeParse(body);
 
 		if (!parsed.success) {

@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AddPrice } from "~/components/products/add";
 import { PricesList } from "~/components/products/list";
-import { Separator } from "~/components/ui/separator";
 import { authClient } from "~/utils/auth-client";
 
 export const Route = createFileRoute("/dashboard")({
@@ -24,7 +23,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="flex flex-col items-center gap-4 p-8 md:flex-row">
+		<div className="flex flex-col items-center gap-4 p-8">
 			<AddPrice />
 			<PricesList />
 		</div>

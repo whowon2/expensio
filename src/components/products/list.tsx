@@ -30,7 +30,7 @@ export function PricesList() {
 	}
 
 	return (
-		<div className="w-full max-w-xl mx-auto">
+		<div className="mx-auto w-full max-w-xl">
 			<div className="flex flex-col gap-4">
 				{products.map((product) => {
 					const lowest = getLowestPrice(product.prices);
@@ -40,7 +40,7 @@ export function PricesList() {
 							<CardHeader>
 								<CardTitle>{product.name}</CardTitle>
 							</CardHeader>
-							<CardContent className="flex flex-col gap-2 text-sm text-gray-700">
+							<CardContent className="flex flex-col gap-2 text-gray-700 text-sm">
 								{/* Lowest Price */}
 								{lowest ? (
 									<div>
@@ -55,7 +55,7 @@ export function PricesList() {
 								{product.prices.length > 0 && (
 									<div>
 										<span className="font-medium">Recent Prices:</span>
-										<ul className="list-disc list-inside">
+										<ul className="list-inside list-disc">
 											{product.prices.map((price) => (
 												<li key={price.id}>
 													{formatPrice(price.value)} at {price.location.name} (

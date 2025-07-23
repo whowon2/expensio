@@ -4,6 +4,7 @@ import {
 	decimal,
 	integer,
 	pgTable,
+	primaryKey,
 	serial,
 	text,
 	timestamp,
@@ -92,8 +93,31 @@ export const price = pgTable("price", {
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const tags = pgTable("tags", {
+	id: serial("id").primaryKey(),
+	name: varchar("name", { length: 255 }).notNull().unique(),
+});
+
+export const productToTags = pgTable(
+	"product_to_tags",
+	{
+		productId: integer("product_id")
+			.notNull()
+			.references(() => product.id),
+		tagId: integer("tag_id")
+			.notNull()
+			.references(() => tags.id),
+	},
+	(t) => [primaryKey({ columns: [t.productId, t.tagId] })],
+);
+
 export const productRelations = relations(product, ({ many }) => ({
 	prices: many(price),
+	productToTags: many(productToTags),
+}));
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+	productToTags: many(productToTags),
 }));
 
 export const priceRelations = relations(price, ({ one }) => ({
@@ -104,5 +128,16 @@ export const priceRelations = relations(price, ({ one }) => ({
 	location: one(location, {
 		fields: [price.locationId],
 		references: [location.id],
+	}),
+}));
+
+export const productToTagsRelations = relations(productToTags, ({ one }) => ({
+	product: one(product, {
+		fields: [productToTags.productId],
+		references: [product.id],
+	}),
+	tag: one(tags, {
+		fields: [productToTags.tagId],
+		references: [tags.id],
 	}),
 }));

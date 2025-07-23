@@ -33,6 +33,16 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "~/components/ui/popover";
+import {
+	Sheet,
+	SheetClose,
+	SheetContent,
+	SheetDescription,
+	SheetFooter,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
+} from "~/components/ui/sheet";
 
 import { useCreatePrice } from "~/hooks/useCreatePrice";
 
@@ -46,9 +56,7 @@ const formSchema = z.object({
 	name: z.string().min(3, {
 		message: "Must be at least 3 characters long",
 	}),
-
 	price: z.number(),
-
 	location: z.string().min(2, {
 		message: "Must be at least 2 characters long",
 	}),
@@ -58,7 +66,6 @@ export function AddPrice() {
 	const createPrice = useCreatePrice();
 
 	const { data: products } = useProducts();
-
 	const { data: locations } = useLocations();
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -86,171 +93,169 @@ export function AddPrice() {
 	}
 
 	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-				<FormField
-					name="name"
-					render={({ field }) => (
-						<FormItem className="flex flex-col">
-							<FormLabel>Product</FormLabel>
+		<Sheet>
+			<SheetTrigger asChild>
+				<Button>Add Product</Button>
+			</SheetTrigger>
+			<SheetContent className="flex flex-col gap-4">
+				<SheetHeader>
+					<SheetTitle>New Price</SheetTitle>
+					<SheetDescription>Add a price to a product</SheetDescription>
+				</SheetHeader>
+				<Form {...form}>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className="grid flex-1 auto-rows-min gap-6 px-4"
+					>
+						<FormField
+							name="name"
+							render={({ field }) => (
+								<FormItem className="flex flex-col">
+									<FormLabel>Product</FormLabel>
+									<Popover>
+										<PopoverTrigger asChild>
+											<FormControl>
+												<Button
+													variant="outline"
+													role="combobox"
+													className={cn(
+														"w-full justify-between",
+														!field.value && "text-muted-foreground",
+													)}
+												>
+													{field.value
+														? products.find(
+																(product) => product.name === field.value,
+															)?.name
+														: "Select Product"}
+													<ChevronsUpDown className="opacity-50" />
+												</Button>
+											</FormControl>
+										</PopoverTrigger>
+										<PopoverContent className="w-full p-0">
+											<Command>
+												<CommandInput
+													placeholder="Search Product..."
+													className="h-9"
+												/>
+												<CommandList>
+													<CommandEmpty>Create Product</CommandEmpty>
+													<CommandGroup>
+														{products.map((product) => (
+															<CommandItem
+																value={product.name}
+																key={product.id}
+																onSelect={() => {
+																	form.setValue("name", product.name);
+																}}
+															>
+																{product.name}
+																<Check
+																	className={cn(
+																		"ml-auto",
+																		product.name === field.value
+																			? "opacity-100"
+																			: "opacity-0",
+																	)}
+																/>
+															</CommandItem>
+														))}
+													</CommandGroup>
+												</CommandList>
+											</Command>
+										</PopoverContent>
+									</Popover>
+									<Button>+</Button>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							name="location"
+							render={({ field }) => (
+								<FormItem className="flex flex-col">
+									<FormLabel>Location</FormLabel>
+									<Popover>
+										<PopoverTrigger asChild>
+											<FormControl>
+												<Button
+													variant="outline"
+													role="combobox"
+													className={cn(
+														"w-full justify-between",
+														!field.value && "text-muted-foreground",
+													)}
+												>
+													{field.value
+														? locations.find(
+																(location) => location.name === field.value,
+															)?.name
+														: "Select Location"}
+													<ChevronsUpDown className="opacity-50" />
+												</Button>
+											</FormControl>
+										</PopoverTrigger>
+										<PopoverContent className="w-full p-0">
+											<Command>
+												<CommandInput
+													placeholder="Search Location..."
+													className="h-9"
+												/>
+												<CommandList>
+													<CommandEmpty>Create Location</CommandEmpty>
+													<CommandGroup>
+														{locations.map((location) => (
+															<CommandItem
+																value={location.name}
+																key={location.id}
+																onSelect={() => {
+																	form.setValue("location", location.name);
+																}}
+															>
+																{location.name}
+																<Check
+																	className={cn(
+																		"ml-auto",
 
-							<Popover>
-								<PopoverTrigger asChild>
-									<FormControl>
-										<Button
-											variant="outline"
-											role="combobox"
-											className={cn(
-												"w-full justify-between",
-
-												!field.value && "text-muted-foreground",
-											)}
-										>
-											{field.value
-												? products.find(
-														(product) => product.name === field.value,
-													)?.name
-												: "Select Product"}
-
-											<ChevronsUpDown className="opacity-50" />
-										</Button>
-									</FormControl>
-								</PopoverTrigger>
-
-								<PopoverContent className="w-full p-0">
-									<Command>
-										<CommandInput
-											placeholder="Search Product..."
-											className="h-9"
-										/>
-
-										<CommandList>
-											<CommandEmpty>Create Product</CommandEmpty>
-
-											<CommandGroup>
-												{products.map((product) => (
-													<CommandItem
-														value={product.name}
-														key={product.id}
-														onSelect={() => {
-															form.setValue("name", product.name);
-														}}
-													>
-														{product.name}
-
-														<Check
-															className={cn(
-																"ml-auto",
-
-																product.name === field.value
-																	? "opacity-100"
-																	: "opacity-0",
-															)}
-														/>
-													</CommandItem>
-												))}
-											</CommandGroup>
-										</CommandList>
-									</Command>
-								</PopoverContent>
-							</Popover>
-
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<FormField
-					name="price"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Price</FormLabel>
-
-							<Input
-								{...form.register("price", { valueAsNumber: true })}
-								type="number"
-								step={0.01}
-							/>
-
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<FormField
-					name="location"
-					render={({ field }) => (
-						<FormItem className="flex flex-col">
-							<FormLabel>Location</FormLabel>
-
-							<Popover>
-								<PopoverTrigger asChild>
-									<FormControl>
-										<Button
-											variant="outline"
-											role="combobox"
-											className={cn(
-												"w-full justify-between",
-
-												!field.value && "text-muted-foreground",
-											)}
-										>
-											{field.value
-												? locations.find(
-														(location) => location.name === field.value,
-													)?.name
-												: "Select Location"}
-
-											<ChevronsUpDown className="opacity-50" />
-										</Button>
-									</FormControl>
-								</PopoverTrigger>
-
-								<PopoverContent className="w-full p-0">
-									<Command>
-										<CommandInput
-											placeholder="Search Location..."
-											className="h-9"
-										/>
-
-										<CommandList>
-											<CommandEmpty>Create Location</CommandEmpty>
-
-											<CommandGroup>
-												{locations.map((location) => (
-													<CommandItem
-														value={location.name}
-														key={location.id}
-														onSelect={() => {
-															form.setValue("location", location.name);
-														}}
-													>
-														{location.name}
-
-														<Check
-															className={cn(
-																"ml-auto",
-
-																location.name === field.value
-																	? "opacity-100"
-																	: "opacity-0",
-															)}
-														/>
-													</CommandItem>
-												))}
-											</CommandGroup>
-										</CommandList>
-									</Command>
-								</PopoverContent>
-							</Popover>
-
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<Button className="w-full">Add Product</Button>
-			</form>
-		</Form>
+																		location.name === field.value
+																			? "opacity-100"
+																			: "opacity-0",
+																	)}
+																/>
+															</CommandItem>
+														))}
+													</CommandGroup>
+												</CommandList>
+											</Command>
+										</PopoverContent>
+									</Popover>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							name="price"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Price</FormLabel>
+									<Input
+										{...form.register("price", { valueAsNumber: true })}
+										type="number"
+										step={0.01}
+									/>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button className="w-full">Add Product</Button>
+					</form>
+				</Form>
+				<SheetFooter>
+					<SheetClose asChild>
+						<Button variant="outline">Close</Button>
+					</SheetClose>
+				</SheetFooter>
+			</SheetContent>
+		</Sheet>
 	);
 }

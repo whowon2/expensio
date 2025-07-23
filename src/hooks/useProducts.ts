@@ -7,7 +7,7 @@ export const useProducts = () =>
 			const res = await fetch("/api/products");
 			return res.json() as Promise<
 				{
-					id: string;
+					id: number;
 					name: string;
 					prices: {
 						id: number;

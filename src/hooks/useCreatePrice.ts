@@ -22,7 +22,10 @@ export function useCreatePrice() {
 			return res.json();
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["prices"] }); // 👈 here
+			queryClient.invalidateQueries({ queryKey: ["products"] });
+		},
+		onError: (err) => {
+			console.error(err);
 		},
 	});
 }
